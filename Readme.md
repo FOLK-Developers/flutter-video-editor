@@ -1,1 +1,2 @@
-Video editing featurs
+Video editing features
+
