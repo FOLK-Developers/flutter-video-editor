@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "949738493719",
+    "firebase_url": "https://aikya-ade7b.firebaseio.com",
+    "project_id": "aikya-ade7b",
+    "storage_bucket": "aikya-ade7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949738493719:android:37eae463f2203833818952",
+        "android_client_info": {
+          "package_name": "com.example.aikya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949738493719-dkjo44c19jjvvlcevuvsp1kon9173ldi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aikya",
+            "certificate_hash": "ee212f8e46babb548fb463407ea2b654bce103ef"
+          }
+        },
+        {
+          "client_id": "949738493719-vhqm51s8ltuap0rlqhtpq588kvps4jqm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy8ErPRf9ZLgxVJeZiG86tTquw2EevCuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "949738493719-vhqm51s8ltuap0rlqhtpq588kvps4jqm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
