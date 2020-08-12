@@ -34,6 +34,7 @@ dependencies:
   chewie: ^0.9.10
   video_trimmer: ^0.2.7
   image_picker: ^0.6.7+4
+  flutter_ffmpeg: ^0.2.10
 
 dev_dependencies:
   flutter_test:
