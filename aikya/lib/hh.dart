@@ -75,7 +75,10 @@ class _TrimmerViewState extends State<TrimmerView> {
     String _value;
 
     await widget._trimmer
-        .saveTrimmedVideo(startValue: _startValue, endValue: _endValue)
+        .saveTrimmedVideo(startValue: _startValue, 
+                         endValue: _endValue,
+                         storageDir: StorageDir.externalStorageDirectory,
+                         // ffmpegCommand:'ffmpeg -i input.mp4 -filter:v "crop=640:480:200:150" output.mp4',)
         .then((value) {
       setState(() {
         _progressVisibility = false;
