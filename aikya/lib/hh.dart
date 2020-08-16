@@ -29,9 +29,9 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Video Trimmer"),
       ),
-      body: Center(
-        child: Container(
-          child: RaisedButton(
+      body: Column(
+        children: [
+          RaisedButton(
             child: Text("LOAD VIDEO"),
             onPressed: () async {
               File file = await ImagePicker.pickVideo(
@@ -47,12 +47,19 @@ class HomePage extends StatelessWidget {
               }
             },
           ),
-        ),
+          RaisedButton(
+              child: Text("MERGE"),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) {
+                  return Merge();
+                }));
+              }),
+        ],
       ),
     );
   }
 }
-
 class TrimmerView extends StatefulWidget {
   final Trimmer _trimmer;
   TrimmerView(this._trimmer);
