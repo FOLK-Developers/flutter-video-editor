@@ -1,52 +1,143 @@
-// import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-// import 'FirebaseMessagingD.dart';
-// import 'urlrb.dart';
-import 'package:video_player/video_player.dart';
-import 'video.dart';
+import 'dart:io';
 
-void main() {
-  runApp(HomeApp());
-}
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:video_trimmer/video_trimmer.dart';
+
+import 'merge.dart';
+import 'finaltrim.dart';
+
+void main() => runApp(HomeApp());
 
 class HomeApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'AikyaYouth',
+      title: 'Aikya',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyApp(),
-      // home: Urlrb(),
+      home: HomePage(),
     );
   }
 }
 
-class MyApp extends StatelessWidget {
+class HomePage extends StatelessWidget {
+  final Trimmer _trimmer = Trimmer();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Video player'),
-        ),
-        body: ListView(
-          children: <Widget>[
-            ChewieListItem(
-              videoPlayerController:
-                  VideoPlayerController.asset('videos/sample-mp4-file.mp4'),
-              looping: true,
+      appBar: AppBar(
+        title: Text("Video Trimmer"),
+      ),
+      body: Center(
+        child: GridView.count(
+          crossAxisCount: 2,
+          // childAspectRatio: 1.0,
+          padding: EdgeInsets.only(
+            top: 150,
+            left: 40,
+            right: 40,
+          ),
+          mainAxisSpacing: 20.0,
+          crossAxisSpacing: 20.0,
+          children: [
+            SizedBox.fromSize(
+              // size: Size(100, 100), // button width and height
+              child: ClipOval(
+                child: Material(
+                  color: Color(0xff2b4570), // button color
+                  child: InkWell(
+                    splashColor: Colors.green, // splash color
+                    onTap: () async {
+                      File file = await ImagePicker.pickVideo(
+                        source: ImageSource.gallery,
+                      );
+                      if (file != null) {
+                        await _trimmer.loadVideo(videoFile: file);
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return TrimmerView(_trimmer);
+                        }));
+                      }
+                    }, // button pressed
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.video_library, size: 40), // icon
+                        Text("Trim"), // text
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-            // ChewieListItem(
-            //   videoPlayerController: VideoPlayerController.network(
-            //     'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            //   ),
-            //   // looping: true,
-            // ),
+            SizedBox.fromSize(
+              // size: Size(100, 100), // button width and height
+              child: ClipOval(
+                child: Material(
+                  color: Color(0xffa37a74), // button color
+                  child: InkWell(
+                    splashColor: Colors.green, // splash color
+                    onTap: () {}, // button pressed
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.crop, size: 40), // icon
+                        Text("Crop"), // text
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox.fromSize(
+              // size: Size(100, 100), // button width and height
+              child: ClipOval(
+                child: Material(
+                  color: Color(0xffabd0db), // button color
+                  child: InkWell(
+                    splashColor: Colors.green, // splash color
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return Merge();
+                      }));
+                    }, // button pressed
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.music_video, size: 40), // icon
+                        Text("Merge"), // text
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox.fromSize(
+              // size: Size(100, 100), // button width and height
+              child: ClipOval(
+                child: Material(
+                  color: Color(0xffe49273), // button color
+                  child: InkWell(
+                    splashColor: Colors.green, // splash color
+                    onTap: () {}, // button pressed
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.rotate_90_degrees_ccw, size: 40), // icon
+                        Text("Rotate"), // text
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

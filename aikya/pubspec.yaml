@@ -35,10 +35,11 @@ dependencies:
   video_trimmer: ^0.2.7
   image_picker: ^0.6.7+4
   flutter_ffmpeg: ^0.2.10
+  
   gallery_saver: ^2.0.1
   path_provider: ^1.6.10
   path: ^1.6.4
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
