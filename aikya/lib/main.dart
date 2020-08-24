@@ -80,7 +80,12 @@ class HomePage extends StatelessWidget {
                   color: Color(0xffa37a74), // button color
                   child: InkWell(
                     splashColor: Colors.green, // splash color
-                    onTap: () {}, // button pressed
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return Crope();
+                      }));
+                    }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -123,7 +128,12 @@ class HomePage extends StatelessWidget {
                   color: Color(0xffe49273), // button color
                   child: InkWell(
                     splashColor: Colors.green, // splash color
-                    onTap: () {}, // button pressed
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return Compresss();
+                      }));
+                    }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
