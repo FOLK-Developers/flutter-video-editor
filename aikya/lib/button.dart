@@ -8,18 +8,16 @@ class RecordVideoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Container(
-          child: SizedBox.expand(
-        child: RaisedButton(
-          color: Colors.white,
-          onPressed: recordVideo,
-          child: Text(buttonText,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, color: Colors.blueGrey)),
-        ),
-      )),
-      flex: 1,
+    return Container(
+      child: FlatButton(
+        color: Colors.yellow,
+        onPressed: recordVideo,
+        child: Text(buttonText,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, color: Colors.blueGrey)),
+      ),
+
+      // flex: 1,
     );
   }
 }

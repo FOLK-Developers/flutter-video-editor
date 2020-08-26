@@ -1,11 +1,12 @@
-import 'dart:io';
-
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:video_trimmer/storage_dir.dart';
 import 'package:video_trimmer/trim_editor.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 import 'package:video_trimmer/video_viewer.dart';
+import 'dart:io';
+import 'dart:math';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class TrimmerView extends StatefulWidget {
   final Trimmer _trimmer;
@@ -17,6 +18,7 @@ class TrimmerView extends StatefulWidget {
 class _TrimmerViewState extends State<TrimmerView> {
   double _startValue = 0.0;
   double _endValue = 0.0;
+  var n = new Random().nextInt(1000);
 
   bool _isPlaying = false;
   bool _progressVisibility = false;
@@ -65,18 +67,67 @@ class _TrimmerViewState extends State<TrimmerView> {
                     backgroundColor: Colors.red,
                   ),
                 ),
-                RaisedButton(
-                  onPressed: _progressVisibility
-                      ? null
-                      : () async {
-                          _saveVideo().then((outputPath) {
-                            print('OUTPUT PATH: $outputPath');
-                            final snackBar = SnackBar(
-                                content: Text('Video Saved successfully'));
-                            Scaffold.of(context).showSnackBar(snackBar);
-                          });
-                        },
-                  child: Text("SAVE"),
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    RaisedButton(
+                      color: Colors.yellow,
+                      onPressed: _progressVisibility
+                          ? null
+                          : () async {
+                              _saveVideo().then((outputPath) {
+                                print('OUTPUT PATH: $outputPath');
+                                GallerySaver.saveVideo(outputPath);
+                                final snackBar = SnackBar(
+                                    content: Text('Video Saved successfully'));
+                                Scaffold.of(context).showSnackBar(snackBar);
+                              });
+                            },
+                      child: Text(
+                        "Save to Gallery",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20, color: Colors.blueGrey),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    RaisedButton(
+                      color: Colors.yellow,
+                      onPressed: _progressVisibility
+                          ? null
+                          : () async {
+                              _saveVideo().then((outputPath) {
+                                File file = new File(outputPath);
+                                final StorageReference firestorageRef =
+                                    FirebaseStorage.instance
+                                        .ref()
+                                        .child("Videos")
+                                        .child('$n.mp4');
+
+                                firestorageRef
+                                    .putFile(file)
+                                    .onComplete
+                                    .then((storage) async {
+                                  String link =
+                                      await storage.ref.getDownloadURL();
+                                  print(link);
+                                  final snackBar = SnackBar(
+                                      content:
+                                          Text('Video Saved successfully'));
+                                  Scaffold.of(context).showSnackBar(snackBar);
+                                });
+                              });
+                            },
+                      child: Text(
+                        "Save to Firebase",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20, color: Colors.blueGrey),
+                      ),
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: VideoViewer(),
@@ -98,41 +149,31 @@ class _TrimmerViewState extends State<TrimmerView> {
                     },
                   ),
                 ),
-                Row(
-                  children: [
-                    FlatButton(
-                      child: _isPlaying
-                          ? Icon(
-                              Icons.pause,
-                              size: 80.0,
-                              color: Colors.white,
-                            )
-                          : Icon(
-                              Icons.play_arrow,
-                              size: 80.0,
-                              color: Colors.white,
-                            ),
-                      onPressed: () async {
-                        bool playbackState =
-                            await widget._trimmer.videPlaybackControl(
-                          startValue: _startValue,
-                          endValue: _endValue,
-                        );
-                        setState(() {
-                          _isPlaying = playbackState;
-                        });
-                      },
-                    ),
-                    FlatButton(
-                      child: Icon(
-                        Icons.refresh,
-                        size: 50.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: null,
-                    )
-                  ],
-                ),
+                Center(
+                  child: FlatButton(
+                    child: _isPlaying
+                        ? Icon(
+                            Icons.pause,
+                            size: 80.0,
+                            color: Colors.white,
+                          )
+                        : Icon(
+                            Icons.play_arrow,
+                            size: 80.0,
+                            color: Colors.white,
+                          ),
+                    onPressed: () async {
+                      bool playbackState =
+                          await widget._trimmer.videPlaybackControl(
+                        startValue: _startValue,
+                        endValue: _endValue,
+                      );
+                      setState(() {
+                        _isPlaying = playbackState;
+                      });
+                    },
+                  ),
+                )
               ],
             ),
           ),

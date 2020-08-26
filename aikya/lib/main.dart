@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+// import 'crope.dart';
+import 'crops.dart';
 import 'package:video_trimmer/video_trimmer.dart';
-
+// import 'compress.dart';
+import 'compresss.dart';
 import 'merge.dart';
 import 'finaltrim.dart';
 
@@ -14,7 +16,7 @@ class HomeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Aikya',
+      title: 'VideoEditor',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -29,7 +31,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Video Trimmer"),
+        title: Text("Video Editor"),
       ),
       body: Center(
         child: GridView.count(
@@ -83,7 +85,7 @@ class HomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
-                        return Crope();
+                        return Crops();
                       }));
                     }, // button pressed
                     child: Column(
@@ -138,7 +140,7 @@ class HomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(Icons.rotate_90_degrees_ccw, size: 40), // icon
-                        Text("Rotate"), // text
+                        Text("Compress"), // text
                       ],
                     ),
                   ),
