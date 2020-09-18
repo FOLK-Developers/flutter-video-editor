@@ -37,9 +37,10 @@ dependencies:
   crop: any
   firebase_storage: ^4.0.0
   gallery_saver: ^2.0.1
+  provider: ^4.3.2+1
   path_provider: ^1.6.10
   path: ^1.6.4
-  video_compress: ^2.0.0
+  flutter_spinkit: ^4.1.2+1
   image_picker:
     git:
       url: https://github.com/miguelpruivo/plugins

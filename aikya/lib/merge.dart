@@ -1,17 +1,21 @@
 import 'dart:io';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 import 'dart:math';
-import 'package:path/path.dart' as path;
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:path/path.dart' as path;
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'button.dart';
+import 'package:video_player/video_player.dart';
+// import 'button.dart';
 
 class Merge extends StatefulWidget {
+  File video;
+  Merge(this.video);
   @override
   _MergeState createState() => _MergeState();
 }
@@ -19,103 +23,88 @@ class Merge extends StatefulWidget {
 class _MergeState extends State<Merge> {
   File _storedVideoOne;
   File _storedVideoTwo;
+  File _scaled;
+  VideoPlayerController videoPlayerController1;
+  VideoPlayerController videoPlayerController2;
+  var h1;
+  String b1 = '...';
+  var w1;
+  var w2;
+  var _r = true;
+
+  var isLoading = false;
+
   var n = new Random().nextInt(1000);
-  String b1 = "Save to Gallery";
-  String b2 = "Save to firebase";
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("MERGE VIDEOS"),
-      ),
-      body: Container(
-        padding: EdgeInsets.only(top: 200),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox.fromSize(
-                  size: Size(100, 100), // button width and height
-                  child: ClipOval(
-                    child: Material(
-                      color: Color(0xffe49273), // button color
-                      child: InkWell(
-                        splashColor: Colors.green, // splash color
-                        onTap: _pickVideo, // button pressed
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.video_library, size: 40), // icon
-                            Text("Video 1"), // text
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                SizedBox.fromSize(
-                  size: Size(100, 100),
-                  child: ClipOval(
-                    child: Material(
-                      color: Color(0xffe49273),
-                      child: InkWell(
-                        splashColor: Colors.green,
-                        onTap: _pickVideo,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.video_library, size: 40),
-                            Text("Video 2"),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            _storedVideoOne != null && _storedVideoTwo != null
-                ? Column(
-                    children: [
-                      RecordVideoButton(_videoMerger, b1),
-                      RecordVideoButton(_videoMergerf, b2),
-                    ],
-                  )
-                : Container(),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    print("VIDEO1 ka H");
+
+    videoPlayerController1 = VideoPlayerController.file(widget.video)
+      ..initialize().then((value) {
+        print("VIDEO1 ka H");
+        h1 = videoPlayerController1.value.size.height;
+        w1 = videoPlayerController1.value.size.width;
+        print(h1);
+      });
+
+    pick();
   }
 
-  void _pickVideo() async {
-    File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
-    // _video = video;
-    if (video != null && video.path != null) {
+  void pick() async {
+    File video2 = await ImagePicker.pickVideo(source: ImageSource.gallery);
+
+    if (video2 != null && video2.path != null) {
       setState(() {
-        if (_storedVideoOne == null) {
-          _storedVideoOne = video;
-          print('video 1 stored');
-        } else {
-          _storedVideoTwo = video;
-          print('video 2 stored');
-          // _videoMerger();
-        }
+        _storedVideoTwo = video2;
+        print("VIDEO2 ka H");
+
+        print('video 2 stored');
+        scale();
+        // merge();
       });
     }
   }
 
-  void _videoMerger() async {
-    // final appDir = await syspaths.getApplicationDocumentsDirectory();
+  void scale() async {
+    // _storedVideoOne = widget.video;
+    final appDir = await syspaths.getExternalStorageDirectory();
+    String rawDocumentPath = appDir.path;
+    String k = "os" + "$n" + ".mp4";
+    final outputPath1 = '$rawDocumentPath/$k';
+
+    final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+    setState(() {
+      isLoading = true;
+      b1 = "Scaling...";
+    });
+    String commandToExecute =
+        '-i ${_storedVideoTwo.path} -vf "scale=$w1:$h1:force_original_aspect_ratio=increase,setsar=1:1,crop=$w1:$h1" $outputPath1';
+    // '-i ${_storedVideoTwo.path} -filter:v "crop=320:240:320:240" $outputPath1';
+    // ' -i ${_storedVideoTwo.path} -vf scale=320:240,setsar=1:1 $outputPath1';
+
+    _flutterFFmpeg.execute(commandToExecute).then((rc) {
+      if (rc == 0) {
+        setState(() {
+          _scaled = File(outputPath1);
+          print('$outputPath1....Calling merge');
+          // Navigator.of(context).pop(File(outputPath1));
+          merge();
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          // _r = false;
+          print("get lost");
+        });
+        print("FFmpeg process exited with rc $rc");
+      }
+    });
+  }
+
+  void merge() async {
+    _storedVideoOne = widget.video;
     final appDir = await syspaths.getExternalStorageDirectory();
     String rawDocumentPath = appDir.path;
     String o = "om" + "$n" + ".mp4";
@@ -123,65 +112,75 @@ class _MergeState extends State<Merge> {
 
     final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
     setState(() {
-      b1 = 'Loading..';
+      isLoading = true;
+      b1 = "Merging..";
     });
     String commandToExecute =
-        '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
+        // ' -i ${_storedVideoOne.path} -i ${_scaled.path} -filter_complex \"[v0][0:a][v1][1:a]concat=n=2:v=1:a=1[outv][outa]" \ -vsync 2 -map "[outv]" -map "[outa]" -c:v libx264 -c:a aac -movflags +faststart $outputPath';
+        ' -i ${_storedVideoOne.path} -i ${_scaled.path} -filter_complex \"[0:v]setsar=1[v0]; \[1:v]setsar=1[v1];[v0][0:a][v1][1:a]concat=n=2:v=1:a=1[outv][outa]" \-map "[outv]"  -vsync 2 -map "[outa]" -c:v libx264 -c:a aac -movflags +faststart $outputPath'; //PERFECT WITH SOUND BUT NOT MERGE
+    // ' -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \"[0:v]scale=$w1:$h1:force_original_aspect_ratio=decrease,pad=$w1:$h1:(ow-iw)/2:(oh-ih)/2[v0]; \[v0][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]" \-map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart $outputPath';
+    // ' -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \"[0:v]scale=320:240:force_original_aspect_ratio=decrease,pad=320:240:(ow-iw)/2:(oh-ih)/2[v0]; \[v0][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]" \-map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart $outputPath';
+    // ' -i ${_storedVideoOne.path} -i ${_scaled.path} -filter_complex \"[0:v]setsar=1[v0]; \[1:v]setsar=1[v1];[v0][0:a][v1][1:a]concat=n=2:v=1:a=1[outv][outa]" \ -vsync 2 -map "[outv]" -map "[outa]" -c:v libx264 -c:a aac -movflags +faststart $outputPath';
+
+    // '-y -i ${_storedVideoOne.path} -i ${_scaled.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -vsync 2 -map \'[out]\' $outputPath'; //workingfine//perfect w/o sound
     _flutterFFmpeg.execute(commandToExecute)
         // .then((rc) => print("FFmpeg process exited with rc $rc"));
         .then((rc) {
       if (rc == 0) {
         setState(() {
-          b1 = "Done !";
-          GallerySaver.saveVideo(outputPath);
+          isLoading = false;
+          // GallerySaver.saveVideo(outputPath);
+          print('$outputPath');
+          _r = true;
+
+          Navigator.of(context).pop(File(outputPath));
         });
       } else {
         setState(() {
-          b1 = 'ERROR';
+          isLoading = false;
+          _r = false;
         });
         print("FFmpeg process exited with rc $rc");
       }
     });
   }
 
-  void _videoMergerf() async {
-    // final appDir = await syspaths.getApplicationDocumentsDirectory();
-    final appDir = await syspaths.getExternalStorageDirectory();
-    String rawDocumentPath = appDir.path;
-    String o = "om" + "$n" + ".mp4";
-    final outputPath = '$rawDocumentPath/$o';
+  @override
+  Widget build(BuildContext context) {
+    return isLoading
+        ? Scaffold(
+            body: Container(
+            color: Colors.black,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Center(
+                  child: SpinKitPouringHourglass(
+                    color: Colors.white,
+                    size: 100,
+                  ),
+                ),
 
-    final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
-    setState(() {
-      b2 = 'Loading..';
-    });
-    String commandToExecute =
-        '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
-    _flutterFFmpeg.execute(commandToExecute)
-        // .then((rc) => print("FFmpeg process exited with rc $rc"));
-        .then((rc) {
-      if (rc == 0) {
-        setState(() {
-          fire(outputPath);
-        });
-      } else {
-        print("FFmpeg process exited with rc $rc");
-      }
-    });
-  }
+                Text(
+                  b1,
+                  style: TextStyle(color: Colors.white, fontSize: 25),
+                ),
 
-  void fire(String out) async {
-    File file = new File("$out");
-    // String name = path.basename(file.path);
-    final StorageReference firestorageRef =
-        FirebaseStorage.instance.ref().child("Videos").child('$n.mp4');
-
-    firestorageRef.putFile(file).onComplete.then((storage) async {
-      String link = await storage.ref.getDownloadURL();
-      print(link);
-      setState(() {
-        b2 = 'DONE!';
-      });
-    });
+                // const SpinKitRotatingPlain(color: Colors.white),
+                // const SpinKitChasingDots(color: Colors.white),
+              ],
+            ),
+          ))
+        : _r
+            ? Container()
+            : Scaffold(
+                body: Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: Text(
+                        "ERROR- Please Try again later..",
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    )));
   }
 }

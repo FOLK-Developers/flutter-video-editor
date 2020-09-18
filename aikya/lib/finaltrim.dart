@@ -1,4 +1,4 @@
-import 'package:gallery_saver/gallery_saver.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:video_trimmer/storage_dir.dart';
 import 'package:video_trimmer/trim_editor.dart';
@@ -6,10 +6,11 @@ import 'package:video_trimmer/video_trimmer.dart';
 import 'package:video_trimmer/video_viewer.dart';
 import 'dart:io';
 import 'dart:math';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 
 class TrimmerView extends StatefulWidget {
   final Trimmer _trimmer;
+
   TrimmerView(this._trimmer);
   @override
   _TrimmerViewState createState() => _TrimmerViewState();
@@ -51,6 +52,28 @@ class _TrimmerViewState extends State<TrimmerView> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Video Trimmer"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.radio),
+            onPressed: _progressVisibility
+                ? null
+                : () async {
+                    _saveVideo().then(
+                      (outputPath) {
+                        print('OUTPUT PATH: $outputPath');
+                        File file = new File(outputPath);
+                        Navigator.of(context).pop(
+                          file,
+                        );
+                        // GallerySaver.saveVideo(outputPath);
+                        // final snackBar =
+                        //     SnackBar(content: Text('Video Saved successfully'));
+                        // Scaffold.of(context).showSnackBar(snackBar);
+                      },
+                    );
+                  },
+          ),
+        ],
       ),
       body: Builder(
         builder: (context) => Center(
@@ -64,77 +87,77 @@ class _TrimmerViewState extends State<TrimmerView> {
                 Visibility(
                   visible: _progressVisibility,
                   child: LinearProgressIndicator(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.white,
                   ),
                 ),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    RaisedButton(
-                      color: Colors.yellow,
-                      onPressed: _progressVisibility
-                          ? null
-                          : () async {
-                              _saveVideo().then((outputPath) {
-                                print('OUTPUT PATH: $outputPath');
-                                GallerySaver.saveVideo(outputPath);
-                                final snackBar = SnackBar(
-                                    content: Text('Video Saved successfully'));
-                                Scaffold.of(context).showSnackBar(snackBar);
-                              });
-                            },
-                      child: Text(
-                        "Save to Gallery",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20, color: Colors.blueGrey),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    RaisedButton(
-                      color: Colors.yellow,
-                      onPressed: _progressVisibility
-                          ? null
-                          : () async {
-                              _saveVideo().then((outputPath) {
-                                File file = new File(outputPath);
-                                final StorageReference firestorageRef =
-                                    FirebaseStorage.instance
-                                        .ref()
-                                        .child("Videos")
-                                        .child('$n.mp4');
+                // Column(
+                //   children: [
+                //     SizedBox(
+                //       height: 20,
+                //     ),
+                //     RaisedButton(
+                //       color: Colors.yellow,
+                //       onPressed: _progressVisibility
+                //           ? null
+                //           : () async {
+                //               _saveVideo().then((outputPath) {
+                //                 print('OUTPUT PATH: $outputPath');
+                //                 GallerySaver.saveVideo(outputPath);
+                //                 final snackBar = SnackBar(
+                //                     content: Text('Video Saved successfully'));
+                //                 Scaffold.of(context).showSnackBar(snackBar);
+                //               });
+                //             },
+                //       child: Text(
+                //         "Save to Gallery",
+                //         textAlign: TextAlign.center,
+                //         style: TextStyle(fontSize: 20, color: Colors.blueGrey),
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       height: 20,
+                //     ),
+                //     RaisedButton(
+                //       color: Colors.yellow,
+                //       onPressed: _progressVisibility
+                //           ? null
+                //           : () async {
+                //               _saveVideo().then((outputPath) {
+                //                 File file = new File(outputPath);
+                //                 final StorageReference firestorageRef =
+                //                     FirebaseStorage.instance
+                //                         .ref()
+                //                         .child("Videos")
+                //                         .child('$n.mp4');
 
-                                firestorageRef
-                                    .putFile(file)
-                                    .onComplete
-                                    .then((storage) async {
-                                  String link =
-                                      await storage.ref.getDownloadURL();
-                                  print(link);
-                                  final snackBar = SnackBar(
-                                      content:
-                                          Text('Video Saved successfully'));
-                                  Scaffold.of(context).showSnackBar(snackBar);
-                                });
-                              });
-                            },
-                      child: Text(
-                        "Save to Firebase",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20, color: Colors.blueGrey),
-                      ),
-                    ),
-                  ],
-                ),
+                //                 firestorageRef
+                //                     .putFile(file)
+                //                     .onComplete
+                //                     .then((storage) async {
+                //                   String link =
+                //                       await storage.ref.getDownloadURL();
+                //                   print(link);
+                //                   final snackBar = SnackBar(
+                //                       content:
+                //                           Text('Video Saved successfully'));
+                //                   Scaffold.of(context).showSnackBar(snackBar);
+                //                 });
+                //               });
+                //             },
+                //       child: Text(
+                //         "Save to Firebase",
+                //         textAlign: TextAlign.center,
+                //         style: TextStyle(fontSize: 20, color: Colors.blueGrey),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Expanded(
                   child: VideoViewer(),
                 ),
                 Center(
                   child: TrimEditor(
-                    viewerHeight: 50.0,
+                    viewerHeight: 70.0,
                     viewerWidth: MediaQuery.of(context).size.width,
                     onChangeStart: (value) {
                       _startValue = value;
