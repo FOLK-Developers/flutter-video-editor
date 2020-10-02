@@ -1,14 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:video_player/video_player.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'button.dart';
 import 'dart:math';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -22,6 +16,7 @@ class Crops extends StatefulWidget {
 class _CropsState extends State<Crops> {
   File _storedVideoOne;
   var isLoading = false;
+
   // VideoPlayerController videoPlayerController;
   // var h, w;
   var n = new Random().nextInt(1000);

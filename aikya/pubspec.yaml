@@ -36,11 +36,18 @@ dependencies:
   flutter_ffmpeg: ^0.2.10
   crop: any
   firebase_storage: ^4.0.0
+  cloud_firestore: ^0.14.0+2
   gallery_saver: ^2.0.1
   provider: ^4.3.2+1
   path_provider: ^1.6.10
   path: ^1.6.4
   flutter_spinkit: ^4.1.2+1
+  signature: ^3.2.0
+  tapioca:
+  flutter_colorpicker: ^0.3.4
+  file_picker: ^1.6.3+2
+  # audio_picker: ^1.0.0
+  audioplayers: ^0.16.1
   image_picker:
     git:
       url: https://github.com/miguelpruivo/plugins
@@ -64,8 +71,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   # assets:
-    
-  #    - assests/me.jpeg
+   
+    #  - assets/audio.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

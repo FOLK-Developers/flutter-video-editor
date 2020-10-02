@@ -50,9 +50,9 @@ class _ChewieListItemState extends State<ChewieListItem> {
           ));
         });
 
-    print("inCHEWIEsize");
-    print(widget.videoPlayerController.value.size.height);
-    print(widget.videoPlayerController.value.size.width);
+    // print("inCHEWIEsize");
+    // print(widget.videoPlayerController.value.size.height);
+    // print(widget.videoPlayerController.value.size.width);
   }
 
   @override
@@ -81,7 +81,7 @@ class _ChewieListItemState extends State<ChewieListItem> {
   @override
   void dispose() {
     super.dispose();
-    // widget.videoPlayerController.dispose();
+    widget.videoPlayerController.dispose();
     _chewieController.dispose();
   }
 }
