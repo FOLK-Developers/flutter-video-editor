@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:aikya/selectAudio.dart';
-import 'package:aikya/speed.dart';
-import 'package:aikya/textover.dart';
+
+import 'package:aikya/widgets/speed.dart';
+import 'package:aikya/widgets/textover.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,16 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'a.dart';
-import 'audio.dart';
-import 'filter.dart';
-import 'video.dart';
-import 'crops.dart';
+import 'widgets/audio.dart';
+import 'widgets/filter.dart';
+import 'tools/video.dart';
+import 'widgets/crops.dart';
 import 'package:video_trimmer/video_trimmer.dart';
-import 'compresss.dart';
-import 'merge.dart';
+import 'widgets/compresss.dart';
+import 'widgets/merge.dart';
 import 'package:video_player/video_player.dart';
-import 'finaltrim.dart';
+import 'widgets/trim.dart';
 
 class HomeApp extends StatelessWidget {
   @override
@@ -45,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   static final FlutterFFprobe _probe = FlutterFFprobe();
   double duration = 0;
   MediaQueryData qd;
-  var n = new Random().nextInt(1000);
+  var n = new Random().nextInt(10000);
   String b = "Save To Cloud";
 
   List<File> video = [];
@@ -152,189 +151,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-          // Expanded(
-          //   child: Container(
-          //     color: Colors.black,
-          //     child: GridView.count(
-          //       crossAxisCount: 5,
-          //       childAspectRatio: 1.0,
-          //       padding: EdgeInsets.only(
-          //         left: 20,
-          //         right: 20,
-          //       ),
-          //       crossAxisSpacing: 20.0,
-          //       children: [
-          // SizedBox.fromSize(
-          //   // size: Size(50, 50), // button width and height
-          //   child: ClipOval(
-          //     child: Material(
-          //       color: Color(0xff2b4570), // button color
-          //       child: InkWell(
-          //         splashColor: Colors.green, // splash color
-          //         onTap: () async {
-          //           File file = video.last;
-          //           if (file != null) {
-          //             await _trimmer.loadVideo(videoFile: file);
-          //             final File tf = await Navigator.of(context)
-          //                 .push(MaterialPageRoute(builder: (context) {
-          //               return TrimmerView(_trimmer);
-          //             }));
-          //             setState(() {
-          //               if (tf != null) {
-          //                 // ff = tf;
-          //                 video.add(tf);
-          //               }
-          //             });
-          //           }
-          //         },
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: <Widget>[
-          //             Icon(Icons.video_library, size: 20), // icon
-          //             Text("Trim"), // text
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // SizedBox.fromSize(
-          //   // size: Size(100, 100), // button width and height
-          //   child: ClipOval(
-          //     child: Material(
-          //       color: Color(0xffa37a74), // button color
-          //       child: InkWell(
-          //         splashColor: Colors.green, // splash color
-          //         onTap: () async {
-          //           File f4 = video.last;
-          //           if (f4 != null) {
-          //             final File t4 = await Navigator.of(context)
-          //                 .push(MaterialPageRoute(builder: (context) {
-          //               // return Crops(video.last);
-          //               return Speedx(video.last);
-          //             }));
-          //             setState(() {
-          //               if (t4 != null) {
-          //                 video.add(t4);
-          //               }
-          //             });
-          //           }
-          //         }, // button pressed
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: <Widget>[
-          //             Icon(Icons.crop, size: 20), // icon
-          //             Text("Crop"), // text
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // SizedBox.fromSize(
-          //   // size: Size(100, 100), // button width and height
-          //   child: ClipOval(
-          //     child: Material(
-          //       color: Color(0xffabd0db), // button color
-          //       child: InkWell(
-          //         splashColor: Colors.green, // splash color
-          //         onTap: () async {
-          //           File f3 = video.last;
-          //           if (f3 != null) {
-          //             final File t3 = await Navigator.of(context)
-          //                 .push(MaterialPageRoute(builder: (context) {
-          //               return Merge(video.last);
-          //             }));
-          //             setState(() {
-          //               if (t3 != null) {
-          //                 video.add(t3);
-          //               }
-          //             });
-          //           }
-          //         }, // button pressed
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: <Widget>[
-          //             Icon(Icons.music_video, size: 20), // icon
-          //             Text("Merge"), // text
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // SizedBox.fromSize(
-          //   // size: Size(100, 100), // button width and height
-          //   child: ClipOval(
-          //     child: Material(
-          //       color: Color(0xff2b4570), // button color
-          //       child: InkWell(
-          //         splashColor: Colors.green, // splash color
-          //         onTap: () async {
-          //           File f5 = video.last;
-          //           if (f5 != null) {
-          //             final File t3 = await Navigator.of(context)
-          //                 .push(MaterialPageRoute(builder: (context) {
-          //               // return Filter();
-          //               return Filter(f5);
-          //             }));
-          //             setState(() {
-          //               if (t3 != null) {
-          //                 video.add(t3);
-          //               }
-          //             });
-          //           }
-          //         }, // button pressed
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: <Widget>[
-          //             Icon(Icons.filter, size: 20), // icon
-          //             Text("FILTER"), // text
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // SizedBox.fromSize(
-          //   // size: Size(100, 100), // button width and height
-          //   child: ClipOval(
-          //     child: Material(
-          //       color: Color(0xffa37a74), // button color
-          //       child: InkWell(
-          //         splashColor: Colors.green, // splash color
-          //         onTap: () async {
-          //           File f5 = video.last;
-          //           if (f5 != null) {
-          //             final File t3 = await Navigator.of(context)
-          //                 .push(MaterialPageRoute(builder: (context) {
-          //               // return Filter();
-          //               return Textover(f5);
-          //             }));
-          //             setState(() {
-          //               if (t3 != null) {
-          //                 video.add(t3);
-          //               }
-          //             });
-          //           }
-          //         }, // button pressed
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: <Widget>[
-          //             Icon(Icons.text_format, size: 20), // icon
-          //             Text("TEXT"), // text
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
       bottomNavigationBar: Container(
         height: 70,
         color: Colors.black,
